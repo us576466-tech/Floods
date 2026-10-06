@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#060a12">
   <meta name="description" content="FLOOD-AI NE: AI-Based Detection of Flood-Affected Areas in North-East India Using Satellite Images. An educational Environmental Studies (EVS) academic prototype.">
   <title>FLOOD-AI NE — AI-Based Flood Detection in North-East India | EVS Project</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;850&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;850&display=swap" rel="stylesheet">
   <!-- Leaflet CSS for Geospatial Satellite Mapping -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
@@ -18,7 +19,7 @@
   <div id="readingProgressBar" class="reading-progress-bar" aria-hidden="true"></div>
 
   <!-- Accessibility Skip Link -->
-  <a href="#home" class="skip-link">Skip to main content</a>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <!-- ========================================================================
        STICKY NAVIGATION BAR
@@ -43,18 +44,13 @@
       <!-- Desktop & Mobile Navigation Links -->
       <nav aria-label="Main Navigation">
         <ul class="nav-menu" id="navMenu">
-          <li><a href="#home" class="nav-link active">Home</a></li>
-          <li><a href="#overview" class="nav-link">Overview</a></li>
-          <li><a href="#analysis-lab" class="nav-link">Analysis Lab</a></li>
-          <li><a href="#before-after" class="nav-link">Before / After</a></li>
-          <li><a href="#interactive-map" class="nav-link">Map</a></li>
-          <li><a href="#north-east-india" class="nav-link">North-East</a></li>
-          <li><a href="#environmental-impact" class="nav-link">Environment</a></li>
-          <li><a href="#optical-vs-sar" class="nav-link">Optical vs SAR</a></li>
-          <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
-          <li><a href="#ai-explanation" class="nav-link">AI Explanation</a></li>
-          <li><a href="#limitations" class="nav-link">Limitations</a></li>
-          <li><a href="#references" class="nav-link">References</a></li>
+          <li><a href="#home" class="nav-link active" aria-current="true">Home</a></li>
+          <li><a href="#interactive-map" class="nav-link">Flood Map</a></li>
+          <li><a href="#analysis-lab" class="nav-link">AI Detection</a></li>
+          <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+          <li><a href="#how-it-works" class="nav-link">Methodology</a></li>
+          <li><a href="#environmental-impact" class="nav-link">Environmental Impact</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
         </ul>
       </nav>
 
@@ -70,157 +66,167 @@
     </div>
   </header>
 
-  <main>
+  <main id="main-content">
     <!-- ======================================================================
          SECTION 1: HERO / HOME
          ====================================================================== -->
     <section class="hero-section" id="home">
-      <!-- Background SVG Art representing satellite orbital telemetry, grid and river contours -->
-      <svg class="hero-background-art" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs>
-          <linearGradient id="heroRiverFlow" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="rgba(37, 99, 235, 0.2)"/>
-            <stop offset="50%" stop-color="rgba(6, 182, 212, 0.25)"/>
-            <stop offset="100%" stop-color="rgba(16, 185, 129, 0.15)"/>
-          </linearGradient>
-          <pattern id="gridPattern" width="60" height="60" patternUnits="userSpaceOnUse">
-            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1"/>
-          </pattern>
-        </defs>
-        <rect width="1440" height="900" fill="url(#gridPattern)"/>
-        <path d="M-100 450 C300 350, 700 600, 1540 400" stroke="url(#heroRiverFlow)" stroke-width="44" stroke-linecap="round"/>
-        <path d="M-50 480 C320 400, 680 580, 1500 440" stroke="rgba(6, 182, 212, 0.15)" stroke-width="12"/>
-        <circle cx="240" cy="220" r="180" stroke="rgba(16, 185, 129, 0.1)" stroke-width="1.5" stroke-dasharray="6 10"/>
-        <circle cx="1200" cy="700" r="260" stroke="rgba(37, 99, 235, 0.08)" stroke-width="2"/>
-        <line x1="120" y1="0" x2="120" y2="900" stroke="rgba(6, 182, 212, 0.05)" stroke-dasharray="4 8"/>
-        <line x1="840" y1="0" x2="840" y2="900" stroke="rgba(6, 182, 212, 0.05)" stroke-dasharray="4 8"/>
-      </svg>
+      <div class="hero-bg" aria-hidden="true">
+        <div class="hero-grid-bg"></div>
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+      </div>
 
       <div class="container hero-grid">
         <div class="hero-content">
-          <div class="hero-badge-container">
-            <span class="badge badge-status">EVS • ACADEMIC PROTOTYPE</span>
-            <span class="badge badge-cyan">🛰️ Satellite-Based Environmental Monitoring</span>
+          <div class="hero-status-row">
+            <span class="system-status" role="status">
+              <span class="status-pulse" aria-hidden="true"></span>
+              AI Monitoring System Active
+            </span>
+            <span class="demo-chip" title="This website runs on simulated demonstration data, not a live satellite feed">Demo Mode · Simulated Data</span>
           </div>
 
           <h1 class="hero-title">
-            FLOOD-AI <span class="gradient-text">NE</span>
+            AI-Powered Flood Detection for <span class="gradient-text">North-East India</span>
           </h1>
 
-          <p class="hero-tagline">
+          <p class="hero-description">
+            Detect, visualize, and understand flood-affected regions using satellite imagery and intelligent environmental analysis.
+          </p>
+
+          <p class="hero-project-line">
+            <span class="hero-project-tag">EVS Project</span>
             AI-Based Detection of Flood-Affected Areas in North-East India Using Satellite Images
           </p>
 
-          <p class="hero-description">
-            An educational prototype demonstrating how satellite imagery and AI-assisted image analysis can help identify and visualize flood-affected areas across the eight North-Eastern states.
-          </p>
-
           <div class="hero-actions">
-            <a href="#analysis-lab" class="btn btn-primary">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              Explore Flood Analysis
+            <a href="#interactive-map" class="btn btn-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>
+              Explore Flood Map
             </a>
-            <a href="#how-it-works" class="btn btn-outline">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              How It Works
+            <a href="#overview" class="btn btn-outline">
+              View Project
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
           </div>
 
-          <!-- Environmental Data Cards (Descriptive, Fact-Based, No Invented Statistics) -->
-          <div class="hero-env-cards">
-            <div class="env-data-card">
-              <span class="env-card-meta">MONITORING AREA</span>
-              <strong class="env-card-val">North-East India</strong>
-              <span class="env-card-sub">8 Himalayan &amp; Valley States</span>
+          <!-- Descriptive project facts (no invented metrics) -->
+          <dl class="hero-facts">
+            <div class="hero-fact">
+              <dt>Monitoring Area</dt>
+              <dd>8 North-East States</dd>
             </div>
-            <div class="env-data-card">
-              <span class="env-card-meta">PRIMARY CASE STUDY</span>
-              <strong class="env-card-val">Assam</strong>
-              <span class="env-card-sub">Brahmaputra &amp; Barak Basins</span>
+            <div class="hero-fact">
+              <dt>Primary Case Study</dt>
+              <dd>Assam · Brahmaputra</dd>
             </div>
-            <div class="env-data-card">
-              <span class="env-card-meta">TECHNOLOGY</span>
-              <strong class="env-card-val">Satellite + AI</strong>
-              <span class="env-card-sub">Optical &amp; SAR Image Workflows</span>
+            <div class="hero-fact">
+              <dt>Technology</dt>
+              <dd>Optical + SAR + AI</dd>
             </div>
-            <div class="env-data-card">
-              <span class="env-card-meta">PROJECT TYPE</span>
-              <strong class="env-card-val">Educational Prototype</strong>
-              <span class="env-card-sub">College EVS Curriculum</span>
+            <div class="hero-fact">
+              <dt>Project Type</dt>
+              <dd>Educational Prototype</dd>
             </div>
-          </div>
+          </dl>
         </div>
 
-        <!-- Hero Visual: Satellite & River Basin Visualization Art -->
+        <!-- Hero Visual: Satellite console with stylised North-East India map -->
         <div class="hero-visual">
-          <div class="satellite-orbit-container">
-            <div class="orbit-ring orbit-ring-1"></div>
-            <div class="orbit-ring orbit-ring-2"></div>
-
-            <!-- Floating Satellite Badge -->
-            <div class="floating-satellite">
-              <span class="satellite-ping"></span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M4.93 4.93l4.24 4.24m5.66 5.66l4.24 4.24M19.07 4.93l-4.24 4.24m-5.66 5.66l-4.24 4.24"/>
-              </svg>
-              <span>Sentinel-1 SAR Orbital Path</span>
+          <div class="hero-console">
+            <div class="console-header">
+              <div class="console-title">
+                <span class="console-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span>NE-INDIA · SAR WATER SEGMENTATION</span>
+              </div>
+              <span class="demo-chip demo-chip-sm">Demo Data</span>
             </div>
 
-            <!-- Visual Terrain Card showing illustrative flood inundation -->
-            <div class="terrain-card">
-              <div class="terrain-card-header">
-                <span class="terrain-coord-badge">26.20° N, 92.94° E</span>
-                <span class="terrain-label-badge">ILLUSTRATIVE VISUALIZATION</span>
-              </div>
-              <svg viewBox="0 0 400 340" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Satellite-style map showing Brahmaputra river system and flood inundation boundary">
+            <div class="console-map">
+              <svg class="hero-ne-map" viewBox="0 0 480 407" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stylised map of the eight North-East Indian states with an illustrative AI flood scan">
                 <defs>
-                  <linearGradient id="heroRiverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#1d4ed8"/>
-                    <stop offset="50%" stop-color="#2563eb"/>
-                    <stop offset="100%" stop-color="#0284c7"/>
-                  </linearGradient>
-                  <radialGradient id="heroFloodMask" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stop-color="rgba(6, 182, 212, 0.45)"/>
-                    <stop offset="70%" stop-color="rgba(37, 99, 235, 0.3)"/>
-                    <stop offset="100%" stop-color="transparent"/>
+                  <pattern id="heroMapGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+                    <path d="M24 0H0V24" fill="none" stroke="rgba(148,163,184,0.08)" stroke-width="1"/>
+                  </pattern>
+                  <radialGradient id="heroFloodGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="rgba(34,211,238,0.55)"/>
+                    <stop offset="100%" stop-color="rgba(34,211,238,0)"/>
                   </radialGradient>
                 </defs>
-                <!-- Background Terrain -->
-                <rect width="400" height="340" fill="#0f172a"/>
-                <!-- Topographic contours -->
-                <path d="M0,80 Q100,50 200,90 T400,60 L400,0 L0,0 Z" fill="#1e293b" opacity="0.7"/>
-                <path d="M0,240 Q120,280 250,220 T400,270 L400,340 L0,340 Z" fill="#1e3a5f" opacity="0.5"/>
-                
-                <!-- Brahmaputra Braided River System -->
-                <path d="M-10,150 C80,130 140,210 220,170 C300,130 350,200 420,180" fill="none" stroke="url(#heroRiverGrad)" stroke-width="26" stroke-linecap="round"/>
-                <path d="M50,160 C120,230 200,150 280,210 T410,200" fill="none" stroke="#38bdf8" stroke-width="8" opacity="0.85"/>
-                
-                <!-- River Islands (Chars like Majuli) -->
-                <ellipse cx="180" cy="180" rx="34" ry="11" fill="#15803d"/>
-                <ellipse cx="270" cy="175" rx="22" ry="7" fill="#10b981"/>
+                <rect width="480" height="407" fill="url(#heroMapGrid)"/>
 
-                <!-- Detected Flood Zone Overlay -->
-                <path d="M90,110 Q160,80 240,130 T350,150 Q320,240 230,230 T80,200 Z" fill="url(#heroFloodMask)"/>
-                <path d="M90,110 Q160,80 240,130 T350,150 Q320,240 230,230 T80,200 Z" fill="none" stroke="#06b6d4" stroke-width="2" stroke-dasharray="6 4"/>
+                <!-- State outlines (approximate, simplified boundaries) -->
+                <g class="hero-states">
+                  <path class="hs risk-fill-moderate" d="M195.9,92.3 L215.5,70.5 L254.7,57.0 L303.7,27.1 L352.7,10.9 L411.4,24.4 L460.4,54.3 L470.2,81.4 L431.0,124.8 L391.8,135.7 L372.2,114.0 L391.8,78.7 L313.5,105.8 L264.5,122.1 L210.6,127.5 L195.9,114.0 L195.9,92.3 Z"/>
+                  <path class="hs risk-fill-very-high" d="M391.8,78.7 L401.6,97.7 L372.2,124.8 L333.1,146.5 L293.9,168.2 L279.2,189.9 L254.7,211.6 L264.5,233.3 L259.6,249.6 L249.8,265.9 L225.3,252.3 L225.3,233.3 L244.9,206.2 L195.9,189.9 L146.9,184.5 L106.3,178.0 L102.9,157.4 L132.2,146.5 L166.5,135.7 L210.6,127.5 L264.5,122.1 L313.5,105.8 L391.8,78.7 Z"/>
+                  <path class="hs risk-fill-moderate" d="M107.8,189.9 L146.9,179.1 L195.9,189.9 L244.9,200.8 L244.9,227.9 L181.2,226.8 L117.6,222.5 L102.9,206.2 L107.8,189.9 Z"/>
+                  <path class="hs risk-fill-low" d="M362.4,124.8 L391.8,135.7 L362.4,162.8 L342.9,189.9 L318.4,206.2 L293.9,200.8 L313.5,168.2 L333.1,146.5 L362.4,124.8 Z"/>
+                  <path class="hs risk-fill-high" d="M313.5,195.4 L342.9,206.2 L333.1,244.2 L323.3,276.8 L274.3,293.0 L254.7,265.9 L264.5,233.3 L279.2,211.6 L313.5,195.4 Z"/>
+                  <path class="hs risk-fill-low" d="M249.8,265.9 L269.4,276.8 L274.3,298.5 L269.4,341.9 L254.7,385.3 L240.0,396.1 L230.2,369.0 L225.3,331.0 L225.3,287.6 L249.8,265.9 Z"/>
+                  <path class="hs risk-fill-high" d="M215.5,260.5 L225.3,276.8 L215.5,314.7 L195.9,341.9 L166.5,325.6 L166.5,298.5 L195.9,271.3 L215.5,260.5 Z"/>
+                  <path class="hs risk-fill-moderate" d="M14.7,114.0 L14.7,92.3 L34.3,70.5 L44.1,65.1 L53.9,81.4 L49.0,108.5 L34.3,119.4 L14.7,114.0 Z"/>
+                </g>
 
-                <!-- Bounding Box Telemetry HUD -->
-                <rect x="70" y="95" width="295" height="150" fill="none" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4 4" opacity="0.6"/>
-                <rect x="70" y="80" width="190" height="16" fill="#06b6d4" rx="3"/>
-                <text x="76" y="92" fill="#0f172a" font-size="9" font-weight="bold">WATER SEGMENTATION BOUNDARY</text>
+                <!-- Brahmaputra main channel (approximate) -->
+                <path class="hero-river" d="M369.8,46.1 L368.8,67.8 L372.2,78.7 L348.7,98.8 L329.1,116.7 L312.5,129.2 L286.5,138.4 L247.3,147.6 L208.2,165.5 L193.5,169.3 L166.5,170.9 L138.1,169.9 L106.3,178.0 L94.0,192.6"/>
 
-                <!-- Thin Satellite Scanning Line Animation -->
-                <line x1="0" y1="170" x2="400" y2="170" stroke="rgba(6, 182, 212, 0.7)" stroke-width="1.5" stroke-dasharray="4 2">
-                  <animate attributeName="y1" values="40;300;40" dur="6s" repeatCount="indefinite"/>
-                  <animate attributeName="y2" values="40;300;40" dur="6s" repeatCount="indefinite"/>
-                </line>
+                <!-- Illustrative detected water zones -->
+                <ellipse cx="300" cy="128" rx="46" ry="16" fill="url(#heroFloodGlow)"/>
+                <ellipse cx="200" cy="168" rx="40" ry="14" fill="url(#heroFloodGlow)"/>
+                <ellipse cx="244" cy="243" rx="22" ry="12" fill="url(#heroFloodGlow)"/>
 
-                <!-- Coordinates footer -->
-                <text x="15" y="325" fill="#94a3b8" font-size="10" font-family="monospace">ESRI WORLD IMAGERY • BRAHMAPUTRA BASIN (ASSAM)</text>
+                <!-- State labels -->
+                <g class="hero-state-labels">
+                  <text x="330" y="70">ARUNACHAL</text>
+                  <text x="222" y="152">ASSAM</text>
+                  <text x="140" y="212">MEGHALAYA</text>
+                  <text x="322" y="170">NAGALAND</text>
+                  <text x="283" y="250">MANIPUR</text>
+                  <text x="226" y="335">MIZORAM</text>
+                  <text x="166" y="306">TRIPURA</text>
+                  <text x="8" y="140">SIKKIM</text>
+                </g>
+
+                <!-- Detection markers -->
+                <g class="hero-detections">
+                  <g class="det" transform="translate(312,127.5)"><circle r="9" class="det-ring"/><circle r="3"/></g>
+                  <g class="det" transform="translate(263,147.6)"><circle r="9" class="det-ring"/><circle r="3"/></g>
+                  <g class="det" transform="translate(193,171.5)"><circle r="9" class="det-ring"/><circle r="3"/></g>
+                  <g class="det" transform="translate(243.9,242.6)"><circle r="9" class="det-ring"/><circle r="3"/></g>
+                  <g class="det" transform="translate(170.4,296.8)"><circle r="9" class="det-ring"/><circle r="3"/></g>
+                </g>
+
+                <!-- Bounding box around primary demo detection -->
+                <g class="hero-bbox">
+                  <rect x="262" y="104" width="96" height="44"/>
+                  <text x="262" y="99">WATER · 0.91 CONF (DEMO)</text>
+                </g>
               </svg>
-              <div class="terrain-card-footer">
-                <span>Educational Demonstration • Satellite Image Workflow</span>
+
+              <!-- AI scanning beam -->
+              <div class="console-scan" aria-hidden="true"></div>
+
+              <!-- Data overlays -->
+              <div class="console-overlay overlay-tl">
+                <span class="ov-label">SENSOR</span>
+                <span class="ov-val">Sentinel-1 · C-band SAR</span>
               </div>
+              <div class="console-overlay overlay-br">
+                <span class="ov-label">WATER PIXELS (DEMO)</span>
+                <span class="ov-val">9.8% of scene</span>
+              </div>
+              <div class="console-coords" aria-hidden="true">26.20°N · 92.94°E</div>
+            </div>
+
+            <div class="console-footer">
+              <div class="risk-legend-inline" aria-label="Risk legend">
+                <span><i class="rl rl-very-high"></i>Very High</span>
+                <span><i class="rl rl-high"></i>High</span>
+                <span><i class="rl rl-moderate"></i>Moderate</span>
+                <span><i class="rl rl-low"></i>Low</span>
+              </div>
+              <span class="console-note">Illustrative only — not live satellite data</span>
             </div>
           </div>
         </div>
@@ -257,7 +263,7 @@
     <!-- ======================================================================
          SECTION 2: PROJECT OVERVIEW ("Why This Project Matters")
          ====================================================================== -->
-    <section class="section section-alt" id="overview">
+    <section class="section section-alt" id="overview" data-nav="home">
       <div class="container">
         <div class="section-header">
           <span class="badge badge-green">ENVIRONMENTAL SCIENCE + AI + SATELLITE IMAGERY</span>
@@ -336,9 +342,348 @@
     </section>
 
     <!-- ======================================================================
+         SECTION 5: INTERACTIVE NORTH-EAST INDIA MAP
+         ====================================================================== -->
+    <section class="section" id="interactive-map" data-nav="interactive-map">
+      <div class="container">
+        <div class="section-header">
+          <span class="badge badge-warning">INTERACTIVE FLOOD MAP · DEMO DATA</span>
+          <h2 class="section-title">North-East India Flood Map</h2>
+          <p class="section-subtitle">
+            Select a state on the map or below to see its demo flood assessment, river systems and environmental concerns. Toggle layers, zoom in, or reset the view.
+          </p>
+        </div>
+
+        <div class="ne-map-wrapper">
+          <div class="map-card-wrapper glass-card">
+            <!-- Map Interactive Toolbar: Basemap switcher and layer toggles -->
+            <div class="map-toolbar">
+              <div class="map-basemap-group">
+                <span class="toolbar-label">Basemap:</span>
+                <button class="map-tool-btn active" id="btnSatelliteBasemap" data-layer="satellite" title="High-Resolution Real Satellite View">
+                  🛰️ Satellite (ESRI)
+                </button>
+                <button class="map-tool-btn" id="btnTopoBasemap" data-layer="topo" title="Topographic Terrain">
+                  🗺️ Topographic
+                </button>
+                <button class="map-tool-btn" id="btnRadarBasemap" data-layer="radar" title="Dark Radar Geospatial View">
+                  📡 SAR Dark
+                </button>
+              </div>
+
+              <div class="map-layers-group">
+                <label class="map-layer-check">
+                  <input type="checkbox" id="checkRiskLayer" checked>
+                  <span>Risk Layer <em class="demo-inline">Demo</em></span>
+                </label>
+                <label class="map-layer-check">
+                  <input type="checkbox" id="checkHotspotsLayer" checked>
+                  <span>🔴 Ecological Hotspots</span>
+                </label>
+                <label class="map-layer-check">
+                  <input type="checkbox" id="checkRiversLayer" checked>
+                  <span>🌊 River Network</span>
+                </label>
+                <button class="map-tool-btn map-reset-btn" id="btnResetMapView" title="Reset map zoom to all 8 North-East states">
+                  ↺ Reset View
+                </button>
+              </div>
+            </div>
+
+            <!-- Real Satellite Map Viewport -->
+            <div id="neIndiaLeafletMap" class="real-satellite-map-container" aria-label="Interactive Map of North-East India"></div>
+
+            <!-- Map Legend -->
+            <div class="map-clean-legend">
+              <div class="legend-row">
+                <span class="legend-title">Flood Risk Level</span>
+                <div class="legend-items">
+                  <span class="legend-item"><i class="rl rl-very-high"></i> Very High</span>
+                  <span class="legend-item"><i class="rl rl-high"></i> High</span>
+                  <span class="legend-item"><i class="rl rl-moderate"></i> Moderate</span>
+                  <span class="legend-item"><i class="rl rl-low"></i> Low</span>
+                </div>
+                <span class="demo-chip demo-chip-sm">Demo Data</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-title">Layers</span>
+                <div class="legend-items">
+                  <span class="legend-item"><span class="legend-dot dot-water"></span> River network</span>
+                  <span class="legend-item"><span class="legend-dot dot-concern"></span> Ecological hotspot</span>
+                  <span class="legend-item"><span class="legend-dot dot-unaffected"></span> Selected state</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Telemetry & Coordinates HUD -->
+            <div class="map-telemetry-hud">
+              <div class="hud-left">
+                <span class="hud-item"><span class="hud-dot live"></span> PROTOTYPE GEOSPATIAL VIEWER</span>
+                <span class="hud-item" id="mapCursorCoords">Lat: 26.2006° N, Lng: 92.9376° E</span>
+              </div>
+              <div class="hud-right">
+                <span class="hud-item">DATUM: WGS84</span>
+                <span class="hud-item" id="mapZoomLevel">ZOOM: 6.8x</span>
+              </div>
+            </div>
+
+            <!-- Quick Pill selector for mobile/touch accessibility -->
+            <div class="states-pills-list">
+              <button class="state-btn active" data-state="assam">Assam</button>
+              <button class="state-btn" data-state="arunachal">Arunachal Pradesh</button>
+              <button class="state-btn" data-state="meghalaya">Meghalaya</button>
+              <button class="state-btn" data-state="manipur">Manipur</button>
+              <button class="state-btn" data-state="mizoram">Mizoram</button>
+              <button class="state-btn" data-state="nagaland">Nagaland</button>
+              <button class="state-btn" data-state="tripura">Tripura</button>
+              <button class="state-btn" data-state="sikkim">Sikkim</button>
+            </div>
+          </div>
+
+          <!-- Dynamic State Info Panel -->
+          <div class="state-detail-panel">
+            <div class="glass-card state-info-card">
+              <div class="state-info-header">
+                <h3 id="stateNameDisplay">Assam</h3>
+                <span class="risk-pill risk-high" id="stateRiskDisplay">High Vulnerability</span>
+              </div>
+
+              <!-- Demo flood assessment (simulated values) -->
+              <div class="state-assessment">
+                <div class="state-assessment-head">
+                  <span class="attr-title">Flood Assessment</span>
+                  <span class="demo-chip demo-chip-sm">Demo Data</span>
+                </div>
+                <div class="assessment-grid">
+                  <div class="assess-item">
+                    <span>Risk Level</span>
+                    <strong id="assessRisk">Very High</strong>
+                  </div>
+                  <div class="assess-item">
+                    <span>Affected Area</span>
+                    <strong id="assessArea">4,820 km²</strong>
+                  </div>
+                  <div class="assess-item">
+                    <span>Flood Probability</span>
+                    <strong id="assessProb">86%</strong>
+                    <div class="assess-bar" aria-hidden="true"><i id="assessProbBar" style="width: 86%"></i></div>
+                  </div>
+                  <div class="assess-item">
+                    <span>Detection Status</span>
+                    <strong id="assessStatus">Flooding detected</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Why It Matters -->
+              <div class="state-why-matters-box">
+                <strong class="why-matters-title">Why it matters:</strong>
+                <p id="stateWhyMatters">
+                  Assam contains major river systems and flood-prone areas, making satellite-based flood monitoring an important environmental application.
+                </p>
+              </div>
+
+              <div class="state-attribute-grid">
+                <div class="attr-item">
+                  <span class="attr-title">State Capital</span>
+                  <div class="attr-val" id="stateCapitalDisplay">Dispur</div>
+                </div>
+                <div class="attr-item">
+                  <span class="attr-title">Major River Systems</span>
+                  <div class="attr-val" id="stateRiversDisplay">Brahmaputra, Barak, Subansiri, Kopili</div>
+                </div>
+                <div class="attr-item">
+                  <span class="attr-title">Terrain Type</span>
+                  <div class="attr-val" id="stateTerrainDisplay">Extensive alluvial river valley</div>
+                </div>
+                <div class="attr-item">
+                  <span class="attr-title">Monsoon Rainfall</span>
+                  <div class="attr-val" id="stateRainfallDisplay">2,000 - 3,500 mm annually</div>
+                </div>
+              </div>
+
+              <!-- Key Environmental Concerns -->
+              <div class="state-concerns-box">
+                <span class="attr-title">Environmental concerns:</span>
+                <ul class="concerns-checklist" id="stateConcernsList">
+                  <li>🌾 <strong>Agriculture:</strong> Monsoon paddy submergence and topsoil sand-casting.</li>
+                  <li>💧 <strong>Wetlands:</strong> Siltation of natural beels and river avulsion.</li>
+                  <li>🐘 <strong>Wildlife:</strong> Kaziranga animal crossing across highway corridors.</li>
+                  <li>🏘️ <strong>Settlements:</strong> Erosion of sandbar char habitations.</li>
+                  <li>🛣️ <strong>Infrastructure:</strong> Breaches of earthen river embankments.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 6: UNDERSTANDING NORTH-EAST INDIA
+         ====================================================================== -->
+    <section class="section section-alt" id="north-east-india" data-nav="interactive-map">
+      <div class="container">
+        <div class="section-header">
+          <span class="badge badge-cyan">REGIONAL PROFILES</span>
+          <h2 class="section-title">Understanding North-East India</h2>
+          <p class="section-subtitle">
+            A comprehensive look at all eight North-Eastern states, their distinctive landscapes, and their flood-monitoring relevance.
+          </p>
+        </div>
+
+        <div class="ne-states-cards-grid">
+          <!-- 1. Assam (Primary Case Study Highlighted) -->
+          <div class="glass-card state-overview-card highlight-state" data-state-ref="assam">
+            <div class="state-card-badge-row">
+              <span class="badge badge-status">PRIMARY CASE STUDY</span>
+              <span class="risk-pill risk-high">High Vulnerability</span>
+            </div>
+            <h3>1. Assam</h3>
+            <p class="state-summary-text">
+              The vast alluvial valley of the Brahmaputra experiences recurrent inundation, riverbank erosion, and char displacement every monsoon season.
+            </p>
+            <div class="state-relevance-pill">
+              <strong>Flood Monitoring Relevance:</strong> Core study area for Brahmaputra braided channel shifts, Majuli river island protection, and Kaziranga wildlife corridors.
+            </div>
+            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'assam\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
+              View on Map →
+            </button>
+          </div>
+
+          <!-- 2. Arunachal Pradesh -->
+          <div class="glass-card state-overview-card" data-state-ref="arunachal">
+            <div class="state-card-badge-row">
+              <span class="badge badge-cyan">Himalayan Headwaters</span>
+              <span class="risk-pill risk-moderate">Flash Floods</span>
+            </div>
+            <h3>2. Arunachal Pradesh</h3>
+            <p class="state-summary-text">
+              Steep Himalayan valleys and intense cloudbursts produce high-velocity flash floods and landslide dam breaches that surge directly into Assam's plains.
+            </p>
+            <div class="state-relevance-pill">
+              <strong>Flood Monitoring Relevance:</strong> Upstream early-warning observation for Siang, Subansiri, and Dibang river surges.
+            </div>
+            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'arunachal\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
+              View on Map →
+            </button>
+          </div>
+
+          <!-- 3. Meghalaya -->
+          <div class="glass-card state-overview-card" data-state-ref="meghalaya">
+            <div class="state-card-badge-row">
+              <span class="badge badge-cyan">Plateau &amp; Foothills</span>
+              <span class="risk-pill risk-moderate">Runoff Hotspot</span>
+            </div>
+            <h3>3. Meghalaya</h3>
+            <p class="state-summary-text">
+              Home to world-record monsoon precipitation (Cherrapunji &amp; Mawsynram). High tablelands shed torrential runoff into low-lying West Garo Hills and Bangladesh.
+            </p>
+            <div class="state-relevance-pill">
+              <strong>Flood Monitoring Relevance:</strong> Observing foothill waterlogging, rapid soil erosion, and trans-boundary river drainage.
+            </div>
+            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'meghalaya\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
+              View on Map →
+            </button>
+          </div>
+
+          <!-- 4. Manipur -->
+          <div class="glass-card state-overview-card" data-state-ref="manipur">
+            <div class="state-card-badge-row">
+              <span class="badge badge-cyan">Central Basin</span>
+              <span class="risk-pill risk-moderate">Valley Congestion</span>
+            </div>
+            <h3>4. Manipur</h3>
+            <p class="state-summary-text">
+              The bowl-shaped Imphal valley drains toward Loktak Lake. When rainfall exceeds drainage capacity, prolonged submergence strikes settlements and farmlands.
+            </p>
+            <div class="state-relevance-pill">
+              <strong>Flood Monitoring Relevance:</strong> Tracking Loktak wetland expansion, drainage channel siltation, and urban runoff.
+            </div>
+            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'manipur\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
+              View on Map →
+            </button>
+          </div>
+
+          <!-- 5. Mizoram -->
+          <div class="glass-card state-overview-card" data-state-ref="mizoram">
+            <div class="state-card-badge-row">
+              <span class="badge badge-cyan">Ridge Terrain</span>
+              <span class="risk-pill risk-low">Gorge Flash Floods</span>
+            </div>
+            <h3>5. Mizoram</h3>
+            <p class="state-summary-text">
+              Parallel north-south ridges prevent widespread standing water, but heavy rainfall causes rapid river gorge surges and dangerous landslides.
+            </p>
+            <div class="state-relevance-pill">
+              <strong>Flood Monitoring Relevance:</strong> Monitoring Kaladan and Tlawng river valleys and road transport severance.
+            </div>
+            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'mizoram\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
+              View on Map →
+            </button>
+          </div>
+
+          <!-- 6. Nagaland -->
+          <div class="glass-card state-overview-card" data-state-ref="nagaland">
+            <div class="state-card-badge-row">
+              <span class="badge badge-cyan">Foothill Valleys</span>
+              <span class="risk-pill risk-low">Localized Overflow</span>
+            </div>
+            <h3>6. Nagaland</h3>
+            <p class="state-summary-text">
+              Rugged hill terrain features localized flash floods and mudflows, with lowland inundations occurring near the Dhansiri river around Dimapur.
+            </p>
+            <div class="state-relevance-pill">
+              <strong>Flood Monitoring Relevance:</strong> Identifying slope-failure river blockages and agricultural terrace damage.
+            </div>
+            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'nagaland\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
+              View on Map →
+            </button>
+          </div>
+
+          <!-- 7. Tripura -->
+          <div class="glass-card state-overview-card" data-state-ref="tripura">
+            <div class="state-card-badge-row">
+              <span class="badge badge-cyan">Alluvial Plains</span>
+              <span class="risk-pill risk-moderate">River Overspill</span>
+            </div>
+            <h3>7. Tripura</h3>
+            <p class="state-summary-text">
+              Low-lying topography surrounded by Bangladesh. Heavy rains in the Howrah and Gomati river basins regularly cause riverbank overflows and urban waterlogging.
+            </p>
+            <div class="state-relevance-pill">
+              <strong>Flood Monitoring Relevance:</strong> Mapping riverine farmland submergence and trans-boundary flood drainage.
+            </div>
+            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'tripura\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
+              View on Map →
+            </button>
+          </div>
+
+          <!-- 8. Sikkim -->
+          <div class="glass-card state-overview-card" data-state-ref="sikkim">
+            <div class="state-card-badge-row">
+              <span class="badge badge-cyan">High Himalayas</span>
+              <span class="risk-pill risk-moderate">GLOF &amp; Teesta Basin</span>
+            </div>
+            <h3>8. Sikkim</h3>
+            <p class="state-summary-text">
+              Glaciated terrain vulnerable to Glacial Lake Outburst Floods (GLOFs) and high-energy flash surges along the Teesta river corridor.
+            </p>
+            <div class="state-relevance-pill">
+              <strong>Flood Monitoring Relevance:</strong> Spaceborne monitoring of high-altitude glacial moraine dams and mountain river channels.
+            </div>
+            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'sikkim\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
+              View on Map →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
          SECTION 3: MAIN FEATURE — FLOOD ANALYSIS LAB
          ====================================================================== -->
-    <section class="section" id="analysis-lab">
+    <section class="section" id="analysis-lab" data-nav="analysis-lab">
       <div class="container">
         <div class="section-header">
           <span class="badge badge-cyan">INTERACTIVE DEMONSTRATION</span>
@@ -580,7 +925,7 @@
     <!-- ======================================================================
          SECTION 4: BEFORE / AFTER FLOOD COMPARISON
          ====================================================================== -->
-    <section class="section section-alt" id="before-after">
+    <section class="section section-alt" id="before-after" data-nav="analysis-lab">
       <div class="container">
         <div class="section-header">
           <span class="badge badge-cyan">SATELLITE CHANGE DETECTION</span>
@@ -631,134 +976,171 @@
     </section>
 
     <!-- ======================================================================
-         SECTION 5: INTERACTIVE NORTH-EAST INDIA MAP
+         DEMO ENVIRONMENTAL MONITORING DASHBOARD
          ====================================================================== -->
-    <section class="section" id="interactive-map">
+    <section class="section" id="dashboard" data-nav="dashboard">
       <div class="container">
         <div class="section-header">
-          <span class="badge badge-warning">PROTOTYPE FLOOD VISUALIZATION</span>
-          <h2 class="section-title">Prototype Flood Visualization Map</h2>
+          <span class="badge badge-warning">DEMO DASHBOARD · SIMULATED DATA</span>
+          <h2 class="section-title">Environmental Monitoring Dashboard</h2>
           <p class="section-subtitle">
-            Explore geospatial flood vulnerability and ecological hotspots across North-East India.
+            How an AI flood-detection system could summarise one analysis run across North-East India. Every figure here is simulated for demonstration and is not a real measurement.
           </p>
         </div>
 
-        <div class="ne-map-wrapper">
-          <div class="map-card-wrapper glass-card">
-            <!-- Map Interactive Toolbar: Basemap switcher and layer toggles -->
-            <div class="map-toolbar">
-              <div class="map-basemap-group">
-                <span class="toolbar-label">Basemap:</span>
-                <button class="map-tool-btn active" id="btnSatelliteBasemap" data-layer="satellite" title="High-Resolution Real Satellite View">
-                  🛰️ Satellite (ESRI)
-                </button>
-                <button class="map-tool-btn" id="btnTopoBasemap" data-layer="topo" title="Topographic Terrain">
-                  🗺️ Topographic
-                </button>
-                <button class="map-tool-btn" id="btnRadarBasemap" data-layer="radar" title="Dark Radar Geospatial View">
-                  📡 SAR Dark
-                </button>
-              </div>
+        <div class="dash-toolbar">
+          <div class="dash-run">
+            <span class="dash-run-label">Scenario</span>
+            <strong>Peak monsoon · Demo Run 01</strong>
+          </div>
+          <div class="dash-run">
+            <span class="dash-run-label">Source</span>
+            <strong>Pre-computed sample values</strong>
+          </div>
+          <span class="demo-chip">Demo Data</span>
+        </div>
 
-              <div class="map-layers-group">
-                <label class="map-layer-check">
-                  <input type="checkbox" id="checkHotspotsLayer" checked>
-                  <span>🔴 Ecological Hotspots</span>
-                </label>
-                <label class="map-layer-check">
-                  <input type="checkbox" id="checkRiversLayer" checked>
-                  <span>🌊 River Network</span>
-                </label>
-                <button class="map-tool-btn map-reset-btn" id="btnResetMapView" title="Reset map zoom to all 8 North-East states">
-                  ↺ Reset View
-                </button>
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">Affected Area</span>
+            <div class="kpi-value"><span data-count="7930" data-format="int">7,930</span><small>km²</small></div>
+            <span class="kpi-foot">Estimated inundated land, all 8 states</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Detected Regions</span>
+            <div class="kpi-value"><span data-count="23" data-format="int">23</span><small>zones</small></div>
+            <span class="kpi-foot">Water clusters flagged by the model</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Water Coverage</span>
+            <div class="kpi-value"><span data-count="9.8" data-format="dec1">9.8</span><small>%</small></div>
+            <span class="kpi-foot">Of scanned scene · 2.9% permanent water</span>
+          </div>
+          <div class="kpi-card kpi-risk">
+            <span class="kpi-label">Overall Risk Level</span>
+            <div class="kpi-value"><span class="kpi-risk-text">High</span></div>
+            <div class="kpi-meter" aria-hidden="true"><span style="--fill: 72%"></span></div>
+            <span class="kpi-foot">Driven by the Brahmaputra valley (Assam)</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Last Analysis</span>
+            <div class="kpi-value"><span class="kpi-text">Demo Run 01</span></div>
+            <span class="kpi-foot">Static sample snapshot — no live feed</span>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="dash-charts">
+          <figure class="chart-card chart-wide">
+            <figcaption class="chart-head">
+              <div>
+                <h3>Flood-affected area by state</h3>
+                <p>Estimated inundated area in km² · coloured by risk level</p>
               </div>
+              <span class="demo-chip demo-chip-sm">Demo Data</span>
+            </figcaption>
+            <div class="chart-body" id="chartAreaByState" role="img" aria-label="Bar chart of simulated flood-affected area by state"></div>
+          </figure>
+
+          <figure class="chart-card">
+            <figcaption class="chart-head">
+              <div>
+                <h3>Water coverage through the monsoon</h3>
+                <p>% of scanned scene classified as water, April – October</p>
+              </div>
+              <span class="demo-chip demo-chip-sm">Demo Data</span>
+            </figcaption>
+            <div class="chart-body" id="chartWaterTrend" role="img" aria-label="Line chart of simulated monthly water coverage"></div>
+          </figure>
+
+          <figure class="chart-card">
+            <figcaption class="chart-head">
+              <div>
+                <h3>Risk level distribution</h3>
+                <p>Number of states in each demo risk level</p>
+              </div>
+              <span class="demo-chip demo-chip-sm">Demo Data</span>
+            </figcaption>
+            <div class="chart-body" id="chartRiskDist" role="img" aria-label="Distribution of states by simulated risk level"></div>
+          </figure>
+        </div>
+
+        <p class="dash-note">
+          <strong>Note:</strong> A real deployment would compute these values from processed Sentinel-1 SAR scenes and validate them against ground data from agencies such as CWC and ASDMA. Here they illustrate the kind of summary such a system produces.
+        </p>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 9: HOW IT WORKS (HOW FLOOD DETECTION WORKS)
+         ====================================================================== -->
+    <section class="section section-alt" id="how-it-works" data-nav="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <span class="badge badge-cyan">PROCESSING TIMELINE</span>
+          <h2 class="section-title">How Flood Detection Works</h2>
+          <p class="section-subtitle">
+            An end-to-end educational pipeline from satellite ingestion to ecological interpretation.
+          </p>
+        </div>
+
+        <div class="pipeline-wrapper">
+          <!-- Horizontal Animated Step Nodes -->
+          <div class="pipeline-steps-horizontal">
+            <div class="pipeline-connector-line">
+              <div class="connector-progress" id="connectorProgress"></div>
             </div>
 
-            <!-- Real Satellite Map Viewport -->
-            <div id="neIndiaLeafletMap" class="real-satellite-map-container" aria-label="Interactive Map of North-East India"></div>
-
-            <!-- Map Legend (Prompt Compliant) -->
-            <div class="map-clean-legend">
-              <span class="legend-title">Map Legend:</span>
-              <div class="legend-items">
-                <span class="legend-item"><span class="legend-dot dot-water"></span> 🔵 Water / Flood-Affected Area</span>
-                <span class="legend-item"><span class="legend-dot dot-unaffected"></span> 🟢 Lower-impact / Unaffected Area</span>
-                <span class="legend-item"><span class="legend-dot dot-concern"></span> 🟠 Higher Environmental Concern</span>
-              </div>
+            <div class="pipeline-step-node active" data-step-index="0">
+              <div class="step-node-icon">🛰️</div>
+              <span class="step-node-number">01</span>
+              <span class="step-node-title">Satellite Image</span>
             </div>
 
-            <!-- Telemetry & Coordinates HUD -->
-            <div class="map-telemetry-hud">
-              <div class="hud-left">
-                <span class="hud-item"><span class="hud-dot live"></span> PROTOTYPE GEOSPATIAL VIEWER</span>
-                <span class="hud-item" id="mapCursorCoords">Lat: 26.2006° N, Lng: 92.9376° E</span>
-              </div>
-              <div class="hud-right">
-                <span class="hud-item">DATUM: WGS84</span>
-                <span class="hud-item" id="mapZoomLevel">ZOOM: 6.8x</span>
-              </div>
+            <div class="pipeline-step-node" data-step-index="1">
+              <div class="step-node-icon">⚙️</div>
+              <span class="step-node-number">02</span>
+              <span class="step-node-title">Image Preprocessing</span>
             </div>
 
-            <!-- Quick Pill selector for mobile/touch accessibility -->
-            <div class="states-pills-list">
-              <button class="state-btn active" data-state="assam">Assam</button>
-              <button class="state-btn" data-state="arunachal">Arunachal Pradesh</button>
-              <button class="state-btn" data-state="meghalaya">Meghalaya</button>
-              <button class="state-btn" data-state="manipur">Manipur</button>
-              <button class="state-btn" data-state="mizoram">Mizoram</button>
-              <button class="state-btn" data-state="nagaland">Nagaland</button>
-              <button class="state-btn" data-state="tripura">Tripura</button>
-              <button class="state-btn" data-state="sikkim">Sikkim</button>
+            <div class="pipeline-step-node" data-step-index="2">
+              <div class="step-node-icon">🧠</div>
+              <span class="step-node-number">03</span>
+              <span class="step-node-title">AI-Assisted Analysis</span>
+            </div>
+
+            <div class="pipeline-step-node" data-step-index="3">
+              <div class="step-node-icon">🎯</div>
+              <span class="step-node-number">04</span>
+              <span class="step-node-title">Flood Segmentation</span>
+            </div>
+
+            <div class="pipeline-step-node" data-step-index="4">
+              <div class="step-node-icon">🗺️</div>
+              <span class="step-node-number">05</span>
+              <span class="step-node-title">Flood Visualization</span>
+            </div>
+
+            <div class="pipeline-step-node" data-step-index="5">
+              <div class="step-node-icon">🌱</div>
+              <span class="step-node-number">06</span>
+              <span class="step-node-title">Environmental Interpretation</span>
             </div>
           </div>
 
-          <!-- Dynamic State Info Panel -->
-          <div class="state-detail-panel">
-            <div class="glass-card state-info-card">
-              <div class="state-info-header">
-                <h3 id="stateNameDisplay">Assam</h3>
-                <span class="risk-pill risk-high" id="stateRiskDisplay">High Vulnerability</span>
-              </div>
-
-              <!-- Why It Matters -->
-              <div class="state-why-matters-box">
-                <strong class="why-matters-title">Why it matters:</strong>
-                <p id="stateWhyMatters">
-                  Assam contains major river systems and flood-prone areas, making satellite-based flood monitoring an important environmental application.
-                </p>
-              </div>
-
-              <div class="state-attribute-grid">
-                <div class="attr-item">
-                  <span class="attr-title">State Capital</span>
-                  <div class="attr-val" id="stateCapitalDisplay">Dispur</div>
-                </div>
-                <div class="attr-item">
-                  <span class="attr-title">Major River Systems</span>
-                  <div class="attr-val" id="stateRiversDisplay">Brahmaputra, Barak, Subansiri, Kopili</div>
-                </div>
-                <div class="attr-item">
-                  <span class="attr-title">Terrain Type</span>
-                  <div class="attr-val" id="stateTerrainDisplay">Extensive alluvial river valley</div>
-                </div>
-                <div class="attr-item">
-                  <span class="attr-title">Monsoon Rainfall</span>
-                  <div class="attr-val" id="stateRainfallDisplay">2,000 - 3,500 mm annually</div>
-                </div>
-              </div>
-
-              <!-- Key Environmental Concerns -->
-              <div class="state-concerns-box">
-                <span class="attr-title">Environmental concerns:</span>
-                <ul class="concerns-checklist" id="stateConcernsList">
-                  <li>🌾 <strong>Agriculture:</strong> Monsoon paddy submergence and topsoil sand-casting.</li>
-                  <li>💧 <strong>Wetlands:</strong> Siltation of natural beels and river avulsion.</li>
-                  <li>🐘 <strong>Wildlife:</strong> Kaziranga animal crossing across highway corridors.</li>
-                  <li>🏘️ <strong>Settlements:</strong> Erosion of sandbar char habitations.</li>
-                  <li>🛣️ <strong>Infrastructure:</strong> Breaches of earthen river embankments.</li>
-                </ul>
-              </div>
+          <!-- Dynamic Detail Box for Selected Pipeline Step -->
+          <div class="glass-card pipeline-detail-card">
+            <div class="pipeline-detail-header">
+              <span class="badge badge-cyan" id="pipelineDetailStep">Step 01</span>
+              <h3 id="pipelineDetailTitle">Satellite Image Acquisition</h3>
+            </div>
+            <div class="pipeline-detail-body" id="pipelineDetailBody">
+              <strong>Satellite imagery is collected for the area of interest.</strong><br><br>
+              Earth observation sensors (such as ESA Sentinel-1 Synthetic Aperture Radar or Sentinel-2 multispectral cameras) capture wide-swath orbital tiles over North-East India river basins.
+            </div>
+            <div class="pipeline-viva-tip">
+              💡 <span id="pipelineDetailTip">EVS Viva Insight: Optical satellites provide natural color images but cannot see through monsoon clouds. Radar satellites (SAR) operate day and night and penetrate monsoon cloud cover.</span>
             </div>
           </div>
         </div>
@@ -766,161 +1148,225 @@
     </section>
 
     <!-- ======================================================================
-         SECTION 6: UNDERSTANDING NORTH-EAST INDIA
+         SECTION 8: OPTICAL VS SAR SATELLITE IMAGERY
          ====================================================================== -->
-    <section class="section section-alt" id="north-east-india">
+    <section class="section" id="optical-vs-sar" data-nav="how-it-works">
       <div class="container">
         <div class="section-header">
-          <span class="badge badge-cyan">REGIONAL PROFILES</span>
-          <h2 class="section-title">Understanding North-East India</h2>
+          <span class="badge badge-cyan">REMOTE SENSING PHYSICS</span>
+          <h2 class="section-title">Optical vs SAR Satellite Imagery</h2>
           <p class="section-subtitle">
-            A comprehensive look at all eight North-Eastern states, their distinctive landscapes, and their flood-monitoring relevance.
+            Understanding the two primary Earth observation satellite technologies used in flood observation.
           </p>
         </div>
 
-        <div class="ne-states-cards-grid">
-          <!-- 1. Assam (Primary Case Study Highlighted) -->
-          <div class="glass-card state-overview-card highlight-state" data-state-ref="assam">
-            <div class="state-card-badge-row">
-              <span class="badge badge-status">PRIMARY CASE STUDY</span>
-              <span class="risk-pill risk-high">High Vulnerability</span>
+        <div class="optical-sar-grid">
+          <!-- Optical Card -->
+          <div class="glass-card sat-comparison-card">
+            <div class="sat-card-header">
+              <div class="sat-header-icon">📷</div>
+              <div>
+                <h3>Optical Imagery</h3>
+                <span class="sat-tech-sub">e.g., Sentinel-2 MSI, Landsat-8/9</span>
+              </div>
             </div>
-            <h3>1. Assam</h3>
-            <p class="state-summary-text">
-              The vast alluvial valley of the Brahmaputra experiences recurrent inundation, riverbank erosion, and char displacement every monsoon season.
-            </p>
-            <div class="state-relevance-pill">
-              <strong>Flood Monitoring Relevance:</strong> Core study area for Brahmaputra braided channel shifts, Majuli river island protection, and Kaziranga wildlife corridors.
+
+            <ul class="sat-feature-list">
+              <li>
+                <strong>Captures Reflected Sunlight:</strong> Operates similarly to a digital camera, recording visible (Red, Green, Blue) and near-infrared light reflected off Earth's surface.
+              </li>
+              <li>
+                <strong>Visually Intuitive:</strong> Natural-color images are easy to interpret without advanced geospatial training.
+              </li>
+              <li>
+                <strong>Spectral Indices:</strong> Near-infrared bands enable Normalized Difference Water Index (NDWI) calculation to delineate open water bodies.
+              </li>
+              <li class="sat-limitation-item">
+                <strong>Major Limitation:</strong> Blinded by clouds and heavy rain. During peak monsoon downpours, thick cloud decks obscure optical sensors.
+              </li>
+            </ul>
+
+            <div class="sat-card-footer-note">
+              🌤️ <em>Best used for baseline pre-flood mapping and post-monsoon recession analysis.</em>
             </div>
-            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'assam\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
-              View on Map →
-            </button>
           </div>
 
-          <!-- 2. Arunachal Pradesh -->
-          <div class="glass-card state-overview-card" data-state-ref="arunachal">
-            <div class="state-card-badge-row">
-              <span class="badge badge-cyan">Himalayan Headwaters</span>
-              <span class="risk-pill risk-moderate">Flash Floods</span>
+          <!-- SAR Card -->
+          <div class="glass-card sat-comparison-card highlight-sar">
+            <div class="sat-card-header">
+              <div class="sat-header-icon">📡</div>
+              <div>
+                <h3>Synthetic Aperture Radar (SAR)</h3>
+                <span class="sat-tech-sub">e.g., Sentinel-1 C-Band SAR, NISAR</span>
+              </div>
             </div>
-            <h3>2. Arunachal Pradesh</h3>
-            <p class="state-summary-text">
-              Steep Himalayan valleys and intense cloudbursts produce high-velocity flash floods and landslide dam breaches that surge directly into Assam's plains.
+
+            <ul class="sat-feature-list">
+              <li>
+                <strong>Active Microwave Radar:</strong> Transmits its own microwave pulses down to Earth and records the signal reflected back to the sensor.
+              </li>
+              <li>
+                <strong>All-Weather &amp; Day/Night:</strong> Radar microwaves penetrate through dense monsoon clouds, rain, fog, and atmospheric smoke 24 hours a day.
+              </li>
+              <li>
+                <strong>Specular Reflection of Water:</strong> Calm standing water acts like a smooth mirror, reflecting radar energy away from the satellite, appearing deep black or dark blue.
+              </li>
+              <li class="sat-limitation-item">
+                <strong>Key Complexity:</strong> Mountainous terrain shadows and wind-induced surface waves can sometimes mimic or distort radar backscatter.
+              </li>
+            </ul>
+
+            <div class="sat-card-footer-note note-highlight">
+              🌧️ <em>The indispensable remote sensing tool for real-time monsoon flood detection.</em>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 10: AI EXPLANATION
+         ====================================================================== -->
+    <section class="section section-alt" id="ai-explanation" data-nav="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <span class="badge badge-cyan">SCIENTIFIC FOUNDATION</span>
+          <h2 class="section-title">How Can AI Help Detect Floods?</h2>
+          <p class="section-subtitle">
+            Demystifying computer vision and artificial intelligence in environmental remote sensing.
+          </p>
+        </div>
+
+        <div class="ai-explanation-content">
+          <div class="ai-intro-text">
+            <p>
+              Artificial Intelligence (specifically computer vision and convolutional neural networks) can be trained to recognize distinctive visual and radiometric patterns associated with surface water in satellite imagery.
             </p>
-            <div class="state-relevance-pill">
-              <strong>Flood Monitoring Relevance:</strong> Upstream early-warning observation for Siang, Subansiri, and Dibang river surges.
-            </div>
-            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'arunachal\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
-              View on Map →
-            </button>
+            <p>
+              In a genuine production deployment, a semantic segmentation architecture (such as U-Net or DeepLab) is trained using historical satellite scenes paired with verified ground-truth flood masks. The model learns to detect water boundaries pixel by pixel, distinguishing temporary standing floodwater from normal permanent river channels, irrigated croplands, and mountain terrain shadows.
+            </p>
           </div>
 
-          <!-- 3. Meghalaya -->
-          <div class="glass-card state-overview-card" data-state-ref="meghalaya">
-            <div class="state-card-badge-row">
-              <span class="badge badge-cyan">Plateau &amp; Foothills</span>
-              <span class="risk-pill risk-moderate">Runoff Hotspot</span>
+          <!-- Requirements of a Real Production System -->
+          <div class="glass-card requirements-card">
+            <h4>What a Production System Requires in the Real World:</h4>
+            <div class="req-grid">
+              <div class="req-item">
+                <span class="req-icon">📚</span>
+                <div>
+                  <strong>Training Datasets</strong>
+                  <p>Thousands of diverse satellite tiles captured across seasons to prevent regional bias.</p>
+                </div>
+              </div>
+
+              <div class="req-item">
+                <span class="req-icon">📍</span>
+                <div>
+                  <strong>Ground-Truth Reference Data</strong>
+                  <p>Verified flood extents recorded by local disaster authorities (ASDMA) and river gauges.</p>
+                </div>
+              </div>
+
+              <div class="req-item">
+                <span class="req-icon">🛰️</span>
+                <div>
+                  <strong>Continuous Satellite Ingestion</strong>
+                  <p>Automated data pipelines connecting directly to Copernicus or ISRO Bhuvan APIs.</p>
+                </div>
+              </div>
+
+              <div class="req-item">
+                <span class="req-icon">🔬</span>
+                <div>
+                  <strong>Rigorous Model Validation</strong>
+                  <p>Cross-validation across diverse river basins to ensure high accuracy on unseen terrain.</p>
+                </div>
+              </div>
             </div>
-            <h3>3. Meghalaya</h3>
-            <p class="state-summary-text">
-              Home to world-record monsoon precipitation (Cherrapunji &amp; Mawsynram). High tablelands shed torrential runoff into low-lying West Garo Hills and Bangladesh.
-            </p>
-            <div class="state-relevance-pill">
-              <strong>Flood Monitoring Relevance:</strong> Observing foothill waterlogging, rapid soil erosion, and trans-boundary river drainage.
-            </div>
-            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'meghalaya\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
-              View on Map →
-            </button>
           </div>
 
-          <!-- 4. Manipur -->
-          <div class="glass-card state-overview-card" data-state-ref="manipur">
-            <div class="state-card-badge-row">
-              <span class="badge badge-cyan">Central Basin</span>
-              <span class="risk-pill risk-moderate">Valley Congestion</span>
+          <!-- Scientific Honesty: Proposed Workflow vs Actual Prototype -->
+          <div class="distinction-cards-row">
+            <div class="glass-card distinction-card">
+              <span class="distinction-tag proposed">PROPOSED WORKFLOW</span>
+              <h4>Deep Learning Semantic Segmentation</h4>
+              <p>
+                A multi-spectral or SAR convolutional neural network processing calibrated satellite passes in real time to generate automated disaster boundary vector files for disaster agencies.
+              </p>
             </div>
-            <h3>4. Manipur</h3>
-            <p class="state-summary-text">
-              The bowl-shaped Imphal valley drains toward Loktak Lake. When rainfall exceeds drainage capacity, prolonged submergence strikes settlements and farmlands.
+
+            <div class="glass-card distinction-card">
+              <span class="distinction-tag actual">ACTUAL PROTOTYPE FUNCTIONALITY</span>
+              <h4>Educational Demonstration Model</h4>
+              <p>
+                A client-side interactive demonstrator illustrating image analysis concepts, pipeline stages, and environmental relevance without connected production backend servers.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 11: LIMITATIONS
+         ====================================================================== -->
+    <section class="section" id="limitations" data-nav="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <span class="badge badge-warning">SCIENTIFIC RIGOR</span>
+          <h2 class="section-title">Limitations</h2>
+          <p class="section-subtitle">
+            An honest evaluation of technological limitations is essential for academic credibility in Environmental Studies and Engineering.
+          </p>
+        </div>
+
+        <div class="limitations-grid">
+          <div class="glass-card limitation-card">
+            <div class="limitation-icon">☁️</div>
+            <h4>Cloud Cover &amp; Optical Sensors</h4>
+            <p>
+              Optical satellite imagery cannot penetrate the thick, persistent monsoon cloud decks that accompany peak flood events across North-East India.
             </p>
-            <div class="state-relevance-pill">
-              <strong>Flood Monitoring Relevance:</strong> Tracking Loktak wetland expansion, drainage channel siltation, and urban runoff.
-            </div>
-            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'manipur\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
-              View on Map →
-            </button>
           </div>
 
-          <!-- 5. Mizoram -->
-          <div class="glass-card state-overview-card" data-state-ref="mizoram">
-            <div class="state-card-badge-row">
-              <span class="badge badge-cyan">Ridge Terrain</span>
-              <span class="risk-pill risk-low">Gorge Flash Floods</span>
-            </div>
-            <h3>5. Mizoram</h3>
-            <p class="state-summary-text">
-              Parallel north-south ridges prevent widespread standing water, but heavy rainfall causes rapid river gorge surges and dangerous landslides.
+          <div class="glass-card limitation-card">
+            <div class="limitation-icon">📡</div>
+            <h4>SAR Wave &amp; Terrain Distortion</h4>
+            <p>
+              While SAR penetrates clouds, high surface winds create water ripples that scatter radar signals, and steep Himalayan ridges cast radar shadows that can mimic water.
             </p>
-            <div class="state-relevance-pill">
-              <strong>Flood Monitoring Relevance:</strong> Monitoring Kaladan and Tlawng river valleys and road transport severance.
-            </div>
-            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'mizoram\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
-              View on Map →
-            </button>
           </div>
 
-          <!-- 6. Nagaland -->
-          <div class="glass-card state-overview-card" data-state-ref="nagaland">
-            <div class="state-card-badge-row">
-              <span class="badge badge-cyan">Foothill Valleys</span>
-              <span class="risk-pill risk-low">Localized Overflow</span>
-            </div>
-            <h3>6. Nagaland</h3>
-            <p class="state-summary-text">
-              Rugged hill terrain features localized flash floods and mudflows, with lowland inundations occurring near the Dhansiri river around Dimapur.
+          <div class="glass-card limitation-card">
+            <div class="limitation-icon">⏱️</div>
+            <h4>Satellite Revisit Latency</h4>
+            <p>
+              Satellites orbit on set cycles, passing over a specific North-East Indian district once every 2 to 5 days, potentially missing sudden 6-hour flash floods.
             </p>
-            <div class="state-relevance-pill">
-              <strong>Flood Monitoring Relevance:</strong> Identifying slope-failure river blockages and agricultural terrace damage.
-            </div>
-            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'nagaland\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
-              View on Map →
-            </button>
           </div>
 
-          <!-- 7. Tripura -->
-          <div class="glass-card state-overview-card" data-state-ref="tripura">
-            <div class="state-card-badge-row">
-              <span class="badge badge-cyan">Alluvial Plains</span>
-              <span class="risk-pill risk-moderate">River Overspill</span>
-            </div>
-            <h3>7. Tripura</h3>
-            <p class="state-summary-text">
-              Low-lying topography surrounded by Bangladesh. Heavy rains in the Howrah and Gomati river basins regularly cause riverbank overflows and urban waterlogging.
+          <div class="glass-card limitation-card">
+            <div class="limitation-icon">🔍</div>
+            <h4>Spatial Resolution Limits</h4>
+            <p>
+              Free public satellite constellations (like Sentinel-1 and Sentinel-2) have 10m to 30m pixel resolution, making it difficult to resolve narrow flooded village alleys and culverts.
             </p>
-            <div class="state-relevance-pill">
-              <strong>Flood Monitoring Relevance:</strong> Mapping riverine farmland submergence and trans-boundary flood drainage.
-            </div>
-            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'tripura\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
-              View on Map →
-            </button>
           </div>
 
-          <!-- 8. Sikkim -->
-          <div class="glass-card state-overview-card" data-state-ref="sikkim">
-            <div class="state-card-badge-row">
-              <span class="badge badge-cyan">High Himalayas</span>
-              <span class="risk-pill risk-moderate">GLOF &amp; Teesta Basin</span>
-            </div>
-            <h3>8. Sikkim</h3>
-            <p class="state-summary-text">
-              Glaciated terrain vulnerable to Glacial Lake Outburst Floods (GLOFs) and high-energy flash surges along the Teesta river corridor.
+          <div class="glass-card limitation-card">
+            <div class="limitation-icon">📊</div>
+            <h4>Training Data Dependency</h4>
+            <p>
+              AI segmentation models depend heavily on the diversity of their training datasets. Models trained exclusively on flat plains may misclassify hilly terrain.
             </p>
-            <div class="state-relevance-pill">
-              <strong>Flood Monitoring Relevance:</strong> Spaceborne monitoring of high-altitude glacial moraine dams and mountain river channels.
-            </div>
-            <button class="btn-card-action" onclick="document.querySelector('.state-btn[data-state=\'sikkim\']').click(); document.getElementById('interactive-map').scrollIntoView({behavior: 'smooth'});">
-              View on Map →
-            </button>
+          </div>
+
+          <div class="glass-card limitation-card">
+            <div class="limitation-icon">🛡️</div>
+            <h4>Need for Ground Validation</h4>
+            <p>
+              Satellite detection outputs must always be validated against ground-truth information (river gauge stations, drone surveys, local reports) before critical emergency decisions.
+            </p>
           </div>
         </div>
       </div>
@@ -929,7 +1375,7 @@
     <!-- ======================================================================
          SECTION 7: ENVIRONMENTAL IMPACT (CORE EVS)
          ====================================================================== -->
-    <section class="section" id="environmental-impact">
+    <section class="section section-alt" id="environmental-impact" data-nav="environmental-impact">
       <div class="container">
         <div class="section-header">
           <span class="badge badge-green">CORE EVS SECTION</span>
@@ -1088,301 +1534,49 @@
     </section>
 
     <!-- ======================================================================
-         SECTION 8: OPTICAL VS SAR SATELLITE IMAGERY
+         ABOUT THE PROJECT
          ====================================================================== -->
-    <section class="section section-alt" id="optical-vs-sar">
+    <section class="section" id="about" data-nav="about">
       <div class="container">
         <div class="section-header">
-          <span class="badge badge-cyan">REMOTE SENSING PHYSICS</span>
-          <h2 class="section-title">Optical vs SAR Satellite Imagery</h2>
+          <span class="badge badge-green">ABOUT THE PROJECT</span>
+          <h2 class="section-title">About FLOOD-AI NE</h2>
           <p class="section-subtitle">
-            Understanding the two primary Earth observation satellite technologies used in flood observation.
+            An Environmental Studies project exploring how satellites and AI can help us understand floods — and what floods do to ecosystems and people.
           </p>
         </div>
 
-        <div class="optical-sar-grid">
-          <!-- Optical Card -->
-          <div class="glass-card sat-comparison-card">
-            <div class="sat-card-header">
-              <div class="sat-header-icon">📷</div>
-              <div>
-                <h3>Optical Imagery</h3>
-                <span class="sat-tech-sub">e.g., Sentinel-2 MSI, Landsat-8/9</span>
-              </div>
-            </div>
-
-            <ul class="sat-feature-list">
-              <li>
-                <strong>Captures Reflected Sunlight:</strong> Operates similarly to a digital camera, recording visible (Red, Green, Blue) and near-infrared light reflected off Earth's surface.
-              </li>
-              <li>
-                <strong>Visually Intuitive:</strong> Natural-color images are easy to interpret without advanced geospatial training.
-              </li>
-              <li>
-                <strong>Spectral Indices:</strong> Near-infrared bands enable Normalized Difference Water Index (NDWI) calculation to delineate open water bodies.
-              </li>
-              <li class="sat-limitation-item">
-                <strong>Major Limitation:</strong> Blinded by clouds and heavy rain. During peak monsoon downpours, thick cloud decks obscure optical sensors.
-              </li>
+        <div class="about-grid">
+          <div class="about-card">
+            <span class="about-index">01</span>
+            <h3>What it is</h3>
+            <p>An interactive educational prototype that walks through a satellite-based flood detection workflow for the eight North-East Indian states, from raw imagery to environmental interpretation.</p>
+          </div>
+          <div class="about-card">
+            <span class="about-index">02</span>
+            <h3>Why it matters</h3>
+            <p>Annual Brahmaputra and Barak floods damage farmland, wetlands, wildlife corridors and riverine communities. Faster, wider visibility of flooded land supports better environmental decisions.</p>
+          </div>
+          <div class="about-card">
+            <span class="about-index">03</span>
+            <h3>Real vs. demo</h3>
+            <ul class="about-list">
+              <li><span class="tag-real">Real</span> Satellite basemap imagery, rivers, scientific explanations and references</li>
+              <li><span class="tag-demo">Demo</span> Risk layer values, dashboard figures and AI lab outputs</li>
             </ul>
-
-            <div class="sat-card-footer-note">
-              🌤️ <em>Best used for baseline pre-flood mapping and post-monsoon recession analysis.</em>
-            </div>
-          </div>
-
-          <!-- SAR Card -->
-          <div class="glass-card sat-comparison-card highlight-sar">
-            <div class="sat-card-header">
-              <div class="sat-header-icon">📡</div>
-              <div>
-                <h3>Synthetic Aperture Radar (SAR)</h3>
-                <span class="sat-tech-sub">e.g., Sentinel-1 C-Band SAR, NISAR</span>
-              </div>
-            </div>
-
-            <ul class="sat-feature-list">
-              <li>
-                <strong>Active Microwave Radar:</strong> Transmits its own microwave pulses down to Earth and records the signal reflected back to the sensor.
-              </li>
-              <li>
-                <strong>All-Weather &amp; Day/Night:</strong> Radar microwaves penetrate through dense monsoon clouds, rain, fog, and atmospheric smoke 24 hours a day.
-              </li>
-              <li>
-                <strong>Specular Reflection of Water:</strong> Calm standing water acts like a smooth mirror, reflecting radar energy away from the satellite, appearing deep black or dark blue.
-              </li>
-              <li class="sat-limitation-item">
-                <strong>Key Complexity:</strong> Mountainous terrain shadows and wind-induced surface waves can sometimes mimic or distort radar backscatter.
-              </li>
-            </ul>
-
-            <div class="sat-card-footer-note note-highlight">
-              🌧️ <em>The indispensable remote sensing tool for real-time monsoon flood detection.</em>
-            </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ======================================================================
-         SECTION 9: HOW IT WORKS (HOW FLOOD DETECTION WORKS)
-         ====================================================================== -->
-    <section class="section" id="how-it-works">
-      <div class="container">
-        <div class="section-header">
-          <span class="badge badge-cyan">PROCESSING TIMELINE</span>
-          <h2 class="section-title">How Flood Detection Works</h2>
-          <p class="section-subtitle">
-            An end-to-end educational pipeline from satellite ingestion to ecological interpretation.
-          </p>
-        </div>
-
-        <div class="pipeline-wrapper">
-          <!-- Horizontal Animated Step Nodes -->
-          <div class="pipeline-steps-horizontal">
-            <div class="pipeline-connector-line">
-              <div class="connector-progress" id="connectorProgress"></div>
-            </div>
-
-            <div class="pipeline-step-node active" data-step-index="0">
-              <div class="step-node-icon">🛰️</div>
-              <span class="step-node-number">01</span>
-              <span class="step-node-title">Satellite Image</span>
-            </div>
-
-            <div class="pipeline-step-node" data-step-index="1">
-              <div class="step-node-icon">⚙️</div>
-              <span class="step-node-number">02</span>
-              <span class="step-node-title">Image Preprocessing</span>
-            </div>
-
-            <div class="pipeline-step-node" data-step-index="2">
-              <div class="step-node-icon">🧠</div>
-              <span class="step-node-number">03</span>
-              <span class="step-node-title">AI-Assisted Analysis</span>
-            </div>
-
-            <div class="pipeline-step-node" data-step-index="3">
-              <div class="step-node-icon">🎯</div>
-              <span class="step-node-number">04</span>
-              <span class="step-node-title">Flood Segmentation</span>
-            </div>
-
-            <div class="pipeline-step-node" data-step-index="4">
-              <div class="step-node-icon">🗺️</div>
-              <span class="step-node-number">05</span>
-              <span class="step-node-title">Flood Visualization</span>
-            </div>
-
-            <div class="pipeline-step-node" data-step-index="5">
-              <div class="step-node-icon">🌱</div>
-              <span class="step-node-number">06</span>
-              <span class="step-node-title">Environmental Interpretation</span>
-            </div>
+        <div class="about-strip">
+          <div class="about-stack">
+            <span class="about-stack-label">Built with</span>
+            <span class="stack-chip">HTML5</span>
+            <span class="stack-chip">CSS3</span>
+            <span class="stack-chip">Vanilla JavaScript</span>
+            <span class="stack-chip">Leaflet</span>
+            <span class="stack-chip">Esri World Imagery</span>
           </div>
-
-          <!-- Dynamic Detail Box for Selected Pipeline Step -->
-          <div class="glass-card pipeline-detail-card">
-            <div class="pipeline-detail-header">
-              <span class="badge badge-cyan" id="pipelineDetailStep">Step 01</span>
-              <h3 id="pipelineDetailTitle">Satellite Image Acquisition</h3>
-            </div>
-            <div class="pipeline-detail-body" id="pipelineDetailBody">
-              <strong>Satellite imagery is collected for the area of interest.</strong><br><br>
-              Earth observation sensors (such as ESA Sentinel-1 Synthetic Aperture Radar or Sentinel-2 multispectral cameras) capture wide-swath orbital tiles over North-East India river basins.
-            </div>
-            <div class="pipeline-viva-tip">
-              💡 <span id="pipelineDetailTip">EVS Viva Insight: Optical satellites provide natural color images but cannot see through monsoon clouds. Radar satellites (SAR) operate day and night and penetrate monsoon cloud cover.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         SECTION 10: AI EXPLANATION
-         ====================================================================== -->
-    <section class="section section-alt" id="ai-explanation">
-      <div class="container">
-        <div class="section-header">
-          <span class="badge badge-cyan">SCIENTIFIC FOUNDATION</span>
-          <h2 class="section-title">How Can AI Help Detect Floods?</h2>
-          <p class="section-subtitle">
-            Demystifying computer vision and artificial intelligence in environmental remote sensing.
-          </p>
-        </div>
-
-        <div class="ai-explanation-content">
-          <div class="ai-intro-text">
-            <p>
-              Artificial Intelligence (specifically computer vision and convolutional neural networks) can be trained to recognize distinctive visual and radiometric patterns associated with surface water in satellite imagery.
-            </p>
-            <p>
-              In a genuine production deployment, a semantic segmentation architecture (such as U-Net or DeepLab) is trained using historical satellite scenes paired with verified ground-truth flood masks. The model learns to detect water boundaries pixel by pixel, distinguishing temporary standing floodwater from normal permanent river channels, irrigated croplands, and mountain terrain shadows.
-            </p>
-          </div>
-
-          <!-- Requirements of a Real Production System -->
-          <div class="glass-card requirements-card">
-            <h4>What a Production System Requires in the Real World:</h4>
-            <div class="req-grid">
-              <div class="req-item">
-                <span class="req-icon">📚</span>
-                <div>
-                  <strong>Training Datasets</strong>
-                  <p>Thousands of diverse satellite tiles captured across seasons to prevent regional bias.</p>
-                </div>
-              </div>
-
-              <div class="req-item">
-                <span class="req-icon">📍</span>
-                <div>
-                  <strong>Ground-Truth Reference Data</strong>
-                  <p>Verified flood extents recorded by local disaster authorities (ASDMA) and river gauges.</p>
-                </div>
-              </div>
-
-              <div class="req-item">
-                <span class="req-icon">🛰️</span>
-                <div>
-                  <strong>Continuous Satellite Ingestion</strong>
-                  <p>Automated data pipelines connecting directly to Copernicus or ISRO Bhuvan APIs.</p>
-                </div>
-              </div>
-
-              <div class="req-item">
-                <span class="req-icon">🔬</span>
-                <div>
-                  <strong>Rigorous Model Validation</strong>
-                  <p>Cross-validation across diverse river basins to ensure high accuracy on unseen terrain.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Scientific Honesty: Proposed Workflow vs Actual Prototype -->
-          <div class="distinction-cards-row">
-            <div class="glass-card distinction-card">
-              <span class="distinction-tag proposed">PROPOSED WORKFLOW</span>
-              <h4>Deep Learning Semantic Segmentation</h4>
-              <p>
-                A multi-spectral or SAR convolutional neural network processing calibrated satellite passes in real time to generate automated disaster boundary vector files for disaster agencies.
-              </p>
-            </div>
-
-            <div class="glass-card distinction-card">
-              <span class="distinction-tag actual">ACTUAL PROTOTYPE FUNCTIONALITY</span>
-              <h4>Educational Demonstration Model</h4>
-              <p>
-                A client-side interactive demonstrator illustrating image analysis concepts, pipeline stages, and environmental relevance without connected production backend servers.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         SECTION 11: LIMITATIONS
-         ====================================================================== -->
-    <section class="section" id="limitations">
-      <div class="container">
-        <div class="section-header">
-          <span class="badge badge-warning">SCIENTIFIC RIGOR</span>
-          <h2 class="section-title">Limitations</h2>
-          <p class="section-subtitle">
-            An honest evaluation of technological limitations is essential for academic credibility in Environmental Studies and Engineering.
-          </p>
-        </div>
-
-        <div class="limitations-grid">
-          <div class="glass-card limitation-card">
-            <div class="limitation-icon">☁️</div>
-            <h4>Cloud Cover &amp; Optical Sensors</h4>
-            <p>
-              Optical satellite imagery cannot penetrate the thick, persistent monsoon cloud decks that accompany peak flood events across North-East India.
-            </p>
-          </div>
-
-          <div class="glass-card limitation-card">
-            <div class="limitation-icon">📡</div>
-            <h4>SAR Wave &amp; Terrain Distortion</h4>
-            <p>
-              While SAR penetrates clouds, high surface winds create water ripples that scatter radar signals, and steep Himalayan ridges cast radar shadows that can mimic water.
-            </p>
-          </div>
-
-          <div class="glass-card limitation-card">
-            <div class="limitation-icon">⏱️</div>
-            <h4>Satellite Revisit Latency</h4>
-            <p>
-              Satellites orbit on set cycles, passing over a specific North-East Indian district once every 2 to 5 days, potentially missing sudden 6-hour flash floods.
-            </p>
-          </div>
-
-          <div class="glass-card limitation-card">
-            <div class="limitation-icon">🔍</div>
-            <h4>Spatial Resolution Limits</h4>
-            <p>
-              Free public satellite constellations (like Sentinel-1 and Sentinel-2) have 10m to 30m pixel resolution, making it difficult to resolve narrow flooded village alleys and culverts.
-            </p>
-          </div>
-
-          <div class="glass-card limitation-card">
-            <div class="limitation-icon">📊</div>
-            <h4>Training Data Dependency</h4>
-            <p>
-              AI segmentation models depend heavily on the diversity of their training datasets. Models trained exclusively on flat plains may misclassify hilly terrain.
-            </p>
-          </div>
-
-          <div class="glass-card limitation-card">
-            <div class="limitation-icon">🛡️</div>
-            <h4>Need for Ground Validation</h4>
-            <p>
-              Satellite detection outputs must always be validated against ground-truth information (river gauge stations, drone surveys, local reports) before critical emergency decisions.
-            </p>
-          </div>
+          <a href="#references" class="btn btn-outline btn-sm">References &amp; Team</a>
         </div>
       </div>
     </section>
@@ -1390,7 +1584,7 @@
     <!-- ======================================================================
          SECTION 12: REFERENCES & VIVA REFERENCE GUIDE
          ====================================================================== -->
-    <section class="section section-alt" id="references">
+    <section class="section section-alt" id="references" data-nav="about">
       <div class="container">
         <div class="section-header">
           <span class="badge badge-cyan">ACADEMIC CITATIONS</span>
@@ -1550,26 +1744,26 @@
         </div>
 
         <div class="footer-links-col">
-          <h5>Navigation</h5>
+          <h5>Platform</h5>
           <ul>
             <li><a href="#home">Home</a></li>
-            <li><a href="#overview">Overview</a></li>
-            <li><a href="#analysis-lab">Analysis Lab</a></li>
+            <li><a href="#interactive-map">Flood Map</a></li>
+            <li><a href="#north-east-india">North-East States</a></li>
+            <li><a href="#analysis-lab">AI Detection Lab</a></li>
             <li><a href="#before-after">Before / After</a></li>
-            <li><a href="#interactive-map">Map</a></li>
-            <li><a href="#north-east-india">North-East</a></li>
+            <li><a href="#dashboard">Dashboard</a></li>
           </ul>
         </div>
 
         <div class="footer-links-col">
           <h5>Science &amp; Ethics</h5>
           <ul>
-            <li><a href="#environmental-impact">Environmental Impact</a></li>
+            <li><a href="#how-it-works">Methodology</a></li>
             <li><a href="#optical-vs-sar">Optical vs SAR</a></li>
-            <li><a href="#how-it-works">How It Works</a></li>
             <li><a href="#ai-explanation">AI Explanation</a></li>
             <li><a href="#limitations">Limitations</a></li>
-            <li><a href="#references">References</a></li>
+            <li><a href="#environmental-impact">Environmental Impact</a></li>
+            <li><a href="#about">About</a> · <a href="#references">References</a></li>
           </ul>
         </div>
       </div>

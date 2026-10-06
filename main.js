@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initAssessmentModal();
   initScrollAnimations();
   initBackToTop();
+  initDashboard();
 });
 
 /* ==========================================================================
@@ -106,20 +107,25 @@ function initStickyNav() {
       navbar.classList.remove("scrolled");
     }
 
-    // Active link highlighting on scroll
-    let currentSectionId = "";
+    // Active link highlighting on scroll.
+    // Sub-sections carry data-nav so they light up their parent nav item
+    // (e.g. "Optical vs SAR" highlights "Methodology").
+    let currentNavId = "home";
     sections.forEach((section) => {
       const sectionTop = section.offsetTop - 140;
       const sectionHeight = section.offsetHeight;
       if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-        currentSectionId = section.getAttribute("id");
+        currentNavId = section.dataset.nav || section.getAttribute("id");
       }
     });
 
     navLinks.forEach((link) => {
-      link.classList.remove("active");
-      if (link.getAttribute("href") === `#${currentSectionId}`) {
-        link.classList.add("active");
+      const isActive = link.getAttribute("href") === `#${currentNavId}`;
+      link.classList.toggle("active", isActive);
+      if (isActive) {
+        link.setAttribute("aria-current", "true");
+      } else {
+        link.removeAttribute("aria-current");
       }
     });
   }, { passive: true });
@@ -297,6 +303,41 @@ const NE_STATES_DATA = {
   }
 };
 
+/* --------------------------------------------------------------------------
+   DEMO flood assessment values (SIMULATED — not real measurements).
+   Used by the map risk layer, map popups, state panel and dashboard so that
+   every view shows the same consistent demonstration numbers.
+   -------------------------------------------------------------------------- */
+const RISK_TIERS = {
+  "very-high": { label: "Very High", color: "#ef4444" },
+  high: { label: "High", color: "#f97316" },
+  moderate: { label: "Moderate", color: "#eab308" },
+  low: { label: "Low", color: "#10b981" }
+};
+
+const DEMO_FLOOD_ASSESSMENT = {
+  assam: { tier: "very-high", areaKm2: 4820, probability: 86, regions: 9, status: "Flooding detected" },
+  tripura: { tier: "high", areaKm2: 880, probability: 64, regions: 3, status: "Flooding detected" },
+  manipur: { tier: "high", areaKm2: 720, probability: 61, regions: 3, status: "Flooding detected" },
+  arunachal: { tier: "moderate", areaKm2: 640, probability: 48, regions: 3, status: "Localised flooding" },
+  meghalaya: { tier: "moderate", areaKm2: 410, probability: 42, regions: 2, status: "Localised flooding" },
+  nagaland: { tier: "low", areaKm2: 190, probability: 26, regions: 1, status: "Under observation" },
+  mizoram: { tier: "low", areaKm2: 150, probability: 22, regions: 1, status: "Under observation" },
+  sikkim: { tier: "moderate", areaKm2: 120, probability: 38, regions: 1, status: "Under observation (GLOF watch)" }
+};
+
+// Monthly % of scanned scene classified as water (DEMO)
+const DEMO_WATER_TREND = [
+  { month: "Apr", value: 3.1 },
+  { month: "May", value: 4.0 },
+  { month: "Jun", value: 6.2 },
+  { month: "Jul", value: 9.8 },
+  { month: "Aug", value: 8.7 },
+  { month: "Sep", value: 6.1 },
+  { month: "Oct", value: 4.2 }
+];
+const DEMO_PERMANENT_WATER = 2.9;
+
 const NE_STATE_BOUNDARIES = {
   assam: [
     [27.85, 95.80], [27.50, 96.00], [27.00, 95.40], [26.60, 94.60], [26.20, 93.80],
@@ -403,6 +444,81 @@ let statePolygonLayers = {};
 let riverLayersGroup = null;
 let hotspotLayersGroup = null;
 let currentBaseLayer = null;
+let riskLayerEnabled = true;
+let activeMapState = "assam";
+
+// Polygon style depends on the (demo) risk layer toggle and selection state
+function getStatePolygonStyle(stateKey, isActive, isHover = false) {
+  const tier = RISK_TIERS[DEMO_FLOOD_ASSESSMENT[stateKey].tier];
+  if (riskLayerEnabled) {
+    return {
+      fillColor: tier.color,
+      fillOpacity: isActive ? 0.55 : isHover ? 0.5 : 0.32,
+      color: isActive ? "#ffffff" : tier.color,
+      weight: isActive ? 3 : isHover ? 2.5 : 1.4,
+      opacity: 0.95
+    };
+  }
+  return {
+    fillColor: isActive || isHover ? "#10b981" : "#1e40af",
+    fillOpacity: isActive ? 0.45 : isHover ? 0.5 : 0.18,
+    color: isActive || isHover ? "#10b981" : "#38bdf8",
+    weight: isActive ? 3 : isHover ? 3 : 1.5,
+    opacity: 0.9
+  };
+}
+
+function formatKm2(value) {
+  return `${value.toLocaleString("en-IN")} km²`;
+}
+
+function buildStatePopupHtml(stateKey) {
+  const data = NE_STATES_DATA[stateKey];
+  const demo = DEMO_FLOOD_ASSESSMENT[stateKey];
+  const tier = RISK_TIERS[demo.tier];
+  return `
+    <div class="state-popup">
+      <div class="state-popup-head">
+        <strong>${data.name}</strong>
+        <span class="demo-chip demo-chip-sm">Demo Data</span>
+      </div>
+      <dl class="state-popup-grid">
+        <dt>Risk Level</dt>
+        <dd><i class="rl" style="background:${tier.color}"></i>${tier.label}</dd>
+        <dt>Affected Area</dt>
+        <dd>${formatKm2(demo.areaKm2)}</dd>
+        <dt>Flood Probability</dt>
+        <dd>${demo.probability}%</dd>
+        <dt>Detection Status</dt>
+        <dd>${demo.status}</dd>
+      </dl>
+      <p class="state-popup-note">Simulated values for demonstration only.</p>
+    </div>
+  `;
+}
+
+function renderStateAssessment(stateKey) {
+  const demo = DEMO_FLOOD_ASSESSMENT[stateKey];
+  if (!demo) return;
+  const tier = RISK_TIERS[demo.tier];
+  const riskEl = document.getElementById("assessRisk");
+  const areaEl = document.getElementById("assessArea");
+  const probEl = document.getElementById("assessProb");
+  const barEl = document.getElementById("assessProbBar");
+  const statusEl = document.getElementById("assessStatus");
+
+  if (riskEl) {
+    riskEl.textContent = tier.label;
+    riskEl.style.color = tier.color;
+  }
+  if (areaEl) areaEl.textContent = formatKm2(demo.areaKm2);
+  if (probEl) probEl.textContent = `${demo.probability}%`;
+  if (barEl) {
+    barEl.style.width = `${demo.probability}%`;
+    barEl.style.background = tier.color;
+  }
+  if (statusEl) statusEl.textContent = demo.status;
+}
 
 function initNeIndiaMap() {
   const mapContainer = document.getElementById("neIndiaLeafletMap");
@@ -438,6 +554,8 @@ function initNeIndiaMap() {
     if (terrainEl) terrainEl.textContent = data.terrain;
     if (rainfallEl) rainfallEl.textContent = data.rainfall;
 
+    renderStateAssessment(stateKey);
+
     if (concernsEl && data.concerns) {
       concernsEl.innerHTML = data.concerns.map(c => `
         <li>${c.icon} <strong>${c.title}:</strong> ${c.text}</li>
@@ -445,20 +563,22 @@ function initNeIndiaMap() {
     }
   }
 
+  function openStatePopup(stateKey) {
+    const layer = statePolygonLayers[stateKey];
+    if (!leafletMap || !layer) return;
+    // Open after fitBounds animation so the popup is not pushed off-screen
+    setTimeout(() => layer.openPopup(layer.getBounds().getCenter()), 850);
+  }
+
   function highlightMapState(stateKey) {
     if (!leafletMap) return;
+
+    activeMapState = stateKey;
 
     // Reset styles
     Object.keys(statePolygonLayers).forEach((key) => {
       const layer = statePolygonLayers[key];
-      if (layer) {
-        layer.setStyle({
-          fillColor: key === stateKey ? "#10b981" : "#1e40af",
-          fillOpacity: key === stateKey ? 0.45 : 0.2,
-          color: key === stateKey ? "#10b981" : "#38bdf8",
-          weight: key === stateKey ? 3.5 : 1.5
-        });
-      }
+      if (layer) layer.setStyle(getStatePolygonStyle(key, key === stateKey));
     });
 
     const targetLayer = statePolygonLayers[stateKey];
@@ -478,6 +598,7 @@ function initNeIndiaMap() {
       const stateKey = btn.dataset.state;
       updateInfoCard(stateKey);
       highlightMapState(stateKey);
+      openStatePopup(stateKey);
       playTechChime(520, 0.05);
     });
   });
@@ -550,9 +671,10 @@ function initLeafletSatelliteMap(updateInfoCard, highlightMapState) {
   const btnReset = document.getElementById("btnResetMapView");
   if (btnReset) {
     btnReset.addEventListener("click", () => {
-      leafletMap.setView(mapCenter, initialZoom, { animate: true });
+      leafletMap.closePopup();
       updateInfoCard("assam");
       highlightMapState("assam");
+      leafletMap.setView(mapCenter, initialZoom, { animate: true });
       playTechChime(400, 0.06);
     });
   }
@@ -561,39 +683,30 @@ function initLeafletSatelliteMap(updateInfoCard, highlightMapState) {
   Object.keys(NE_STATE_BOUNDARIES).forEach((stateKey) => {
     const coords = NE_STATE_BOUNDARIES[stateKey];
     const data = NE_STATES_DATA[stateKey];
-    const isAssam = stateKey === "assam";
+    const demo = DEMO_FLOOD_ASSESSMENT[stateKey];
 
     const polygon = L.polygon(coords, {
-      color: isAssam ? "#10b981" : "#38bdf8",
-      weight: isAssam ? 3 : 1.5,
-      opacity: 0.9,
-      fillColor: isAssam ? "#10b981" : "#1e40af",
-      fillOpacity: isAssam ? 0.35 : 0.15,
+      ...getStatePolygonStyle(stateKey, stateKey === activeMapState),
       className: "state-boundary-polygon"
     }).addTo(leafletMap);
 
-    polygon.bindTooltip(`<strong>${data.name}</strong><br><span style="font-size: 11px;">${data.risk} Vulnerability</span>`, {
+    polygon.bindPopup(() => buildStatePopupHtml(stateKey), {
+      maxWidth: 280,
+      className: "state-popup-wrapper"
+    });
+
+    polygon.bindTooltip(`<strong>${data.name}</strong><br><span style="font-size: 11px;">${RISK_TIERS[demo.tier].label} risk · Demo</span>`, {
       sticky: true,
       direction: "top",
       className: "custom-leaflet-tooltip"
     });
 
     polygon.on("mouseover", () => {
-      polygon.setStyle({
-        fillOpacity: 0.5,
-        weight: 3.5,
-        color: "#10b981"
-      });
+      polygon.setStyle(getStatePolygonStyle(stateKey, stateKey === activeMapState, true));
     });
 
     polygon.on("mouseout", () => {
-      const activeBtn = document.querySelector(`.state-btn.active`);
-      const isActive = activeBtn && activeBtn.dataset.state === stateKey;
-      polygon.setStyle({
-        fillOpacity: isActive ? 0.45 : 0.18,
-        weight: isActive ? 3 : 1.5,
-        color: isActive ? "#10b981" : "#38bdf8"
-      });
+      polygon.setStyle(getStatePolygonStyle(stateKey, stateKey === activeMapState));
     });
 
     polygon.on("click", () => {
@@ -653,6 +766,16 @@ function initLeafletSatelliteMap(updateInfoCard, highlightMapState) {
   hotspotLayersGroup.addTo(leafletMap);
 
   // Checkbox layer toggles
+  const checkRisk = document.getElementById("checkRiskLayer");
+  if (checkRisk) {
+    checkRisk.addEventListener("change", (e) => {
+      riskLayerEnabled = e.target.checked;
+      Object.keys(statePolygonLayers).forEach((key) => {
+        statePolygonLayers[key].setStyle(getStatePolygonStyle(key, key === activeMapState));
+      });
+    });
+  }
+
   const checkHotspots = document.getElementById("checkHotspotsLayer");
   const checkRivers = document.getElementById("checkRiversLayer");
 
@@ -1508,4 +1631,258 @@ function initBackToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
     playTechChime(680, 0.08);
   });
+}
+
+/* ==========================================================================
+   12. Demo Environmental Monitoring Dashboard
+   All values come from DEMO_FLOOD_ASSESSMENT / DEMO_WATER_TREND (simulated).
+   Charts are hand-drawn SVG so no extra chart library is needed.
+   ========================================================================== */
+const SVG_NS = "http://www.w3.org/2000/svg";
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function svgEl(tag, attrs = {}, text) {
+  const el = document.createElementNS(SVG_NS, tag);
+  Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+  if (text !== undefined) el.textContent = text;
+  return el;
+}
+
+function initDashboard() {
+  if (!document.getElementById("dashboard")) return;
+  initCounters();
+  renderAreaByStateChart();
+  renderWaterTrendChart();
+  renderRiskDistributionChart();
+}
+
+// Shared tooltip for all dashboard charts
+function getChartTooltip() {
+  let tip = document.getElementById("chartTooltip");
+  if (!tip) {
+    tip = document.createElement("div");
+    tip.id = "chartTooltip";
+    tip.className = "chart-tooltip";
+    tip.setAttribute("role", "status");
+    document.body.appendChild(tip);
+  }
+  return tip;
+}
+
+function attachTooltip(target, html) {
+  const tip = getChartTooltip();
+  const show = (e) => {
+    tip.innerHTML = html;
+    tip.classList.add("visible");
+    move(e);
+  };
+  const move = (e) => {
+    const x = e.clientX ?? target.getBoundingClientRect().left;
+    const y = e.clientY ?? target.getBoundingClientRect().top;
+    tip.style.left = `${x}px`;
+    tip.style.top = `${y - 14}px`;
+  };
+  const hide = () => tip.classList.remove("visible");
+  target.addEventListener("pointerenter", show);
+  target.addEventListener("pointermove", move);
+  target.addEventListener("pointerleave", hide);
+  target.addEventListener("focus", (e) => {
+    const r = target.getBoundingClientRect();
+    show({ clientX: r.left + r.width / 2, clientY: r.top });
+  });
+  target.addEventListener("blur", hide);
+}
+
+// Animated KPI counters (run once when the dashboard scrolls into view)
+function initCounters() {
+  const counters = document.querySelectorAll("[data-count]");
+  if (!counters.length) return;
+
+  const format = (value, type) => {
+    if (type === "dec1") return value.toFixed(1);
+    return Math.round(value).toLocaleString("en-IN");
+  };
+
+  const run = (el) => {
+    const target = parseFloat(el.dataset.count);
+    const type = el.dataset.format;
+    if (prefersReducedMotion) {
+      el.textContent = format(target, type);
+      return;
+    }
+    const duration = 1400;
+    const start = performance.now();
+    const tick = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = format(target * eased, type);
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+
+  if (!("IntersectionObserver" in window)) {
+    counters.forEach(run);
+    return;
+  }
+
+  // Show 0 until visible so the count-up is noticeable
+  if (!prefersReducedMotion) counters.forEach((el) => (el.textContent = format(0, el.dataset.format)));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        run(entry.target);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+
+  counters.forEach((el) => observer.observe(el));
+}
+
+// Chart 1: horizontal bars — affected area per state, coloured by risk tier
+function renderAreaByStateChart() {
+  const host = document.getElementById("chartAreaByState");
+  if (!host) return;
+
+  const rows = Object.keys(DEMO_FLOOD_ASSESSMENT)
+    .map((key) => ({ key, name: NE_STATES_DATA[key].name, ...DEMO_FLOOD_ASSESSMENT[key] }))
+    .sort((a, b) => b.areaKm2 - a.areaKm2);
+
+  const W = 720, rowH = 34, padL = 148, padR = 76, padT = 8;
+  const H = padT + rows.length * rowH + 22;
+  const max = Math.ceil(rows[0].areaKm2 / 1000) * 1000;
+  const x = (v) => padL + (v / max) * (W - padL - padR);
+
+  const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, class: "chart-svg" });
+
+  // Gridlines + axis labels
+  for (let v = 0; v <= max; v += 1000) {
+    svg.appendChild(svgEl("line", { x1: x(v), x2: x(v), y1: padT, y2: H - 22, class: "chart-grid" }));
+    svg.appendChild(svgEl("text", { x: x(v), y: H - 6, class: "chart-axis", "text-anchor": "middle" }, v.toLocaleString("en-IN")));
+  }
+
+  rows.forEach((row, i) => {
+    const y = padT + i * rowH;
+    const tier = RISK_TIERS[row.tier];
+    svg.appendChild(svgEl("text", { x: padL - 12, y: y + rowH / 2 + 4, class: "chart-label", "text-anchor": "end" }, row.name));
+
+    const bar = svgEl("rect", {
+      x: padL,
+      y: y + 8,
+      width: Math.max(x(row.areaKm2) - padL, 2),
+      height: rowH - 16,
+      rx: 3,
+      fill: tier.color,
+      class: "chart-bar",
+      tabindex: "0",
+      style: `--d:${i * 70}ms`
+    });
+    svg.appendChild(bar);
+    attachTooltip(bar, `<strong>${row.name}</strong><br>${formatKm2(row.areaKm2)} · ${tier.label} risk<br><em>Demo data</em>`);
+
+    svg.appendChild(svgEl("text", { x: x(row.areaKm2) + 8, y: y + rowH / 2 + 4, class: "chart-value" }, row.areaKm2.toLocaleString("en-IN")));
+  });
+
+  host.appendChild(svg);
+  host.appendChild(buildRiskLegend());
+}
+
+// Chart 2: line/area — monthly water coverage vs permanent water baseline
+function renderWaterTrendChart() {
+  const host = document.getElementById("chartWaterTrend");
+  if (!host) return;
+
+  const W = 420, H = 230, padL = 36, padR = 16, padT = 16, padB = 28;
+  const max = 12;
+  const step = (W - padL - padR) / (DEMO_WATER_TREND.length - 1);
+  const x = (i) => padL + i * step;
+  const y = (v) => padT + (1 - v / max) * (H - padT - padB);
+
+  const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, class: "chart-svg" });
+  const defs = svgEl("defs");
+  const grad = svgEl("linearGradient", { id: "waterTrendFill", x1: "0", y1: "0", x2: "0", y2: "1" });
+  grad.appendChild(svgEl("stop", { offset: "0%", "stop-color": "#22d3ee", "stop-opacity": "0.35" }));
+  grad.appendChild(svgEl("stop", { offset: "100%", "stop-color": "#22d3ee", "stop-opacity": "0" }));
+  defs.appendChild(grad);
+  svg.appendChild(defs);
+
+  for (let v = 0; v <= max; v += 3) {
+    svg.appendChild(svgEl("line", { x1: padL, x2: W - padR, y1: y(v), y2: y(v), class: "chart-grid" }));
+    svg.appendChild(svgEl("text", { x: padL - 8, y: y(v) + 4, class: "chart-axis", "text-anchor": "end" }, `${v}%`));
+  }
+
+  // Permanent water baseline
+  svg.appendChild(svgEl("line", { x1: padL, x2: W - padR, y1: y(DEMO_PERMANENT_WATER), y2: y(DEMO_PERMANENT_WATER), class: "chart-baseline" }));
+  svg.appendChild(svgEl("text", { x: W - padR, y: y(DEMO_PERMANENT_WATER) - 6, class: "chart-axis", "text-anchor": "end" }, "Permanent water"));
+
+  const pts = DEMO_WATER_TREND.map((d, i) => [x(i), y(d.value)]);
+  const line = pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
+  svg.appendChild(svgEl("path", { d: `${line} L${x(pts.length - 1)},${y(0)} L${x(0)},${y(0)} Z`, fill: "url(#waterTrendFill)" }));
+  svg.appendChild(svgEl("path", { d: line, class: "chart-line" }));
+
+  DEMO_WATER_TREND.forEach((d, i) => {
+    svg.appendChild(svgEl("text", { x: x(i), y: H - 8, class: "chart-axis", "text-anchor": "middle" }, d.month));
+    const isPeak = d.value === Math.max(...DEMO_WATER_TREND.map((t) => t.value));
+    const dot = svgEl("circle", { cx: x(i), cy: y(d.value), r: isPeak ? 5 : 3.5, class: isPeak ? "chart-dot peak" : "chart-dot", tabindex: "0" });
+    svg.appendChild(dot);
+    attachTooltip(dot, `<strong>${d.month}</strong><br>${d.value.toFixed(1)}% water coverage<br><em>Demo data</em>`);
+    if (isPeak) {
+      svg.appendChild(svgEl("text", { x: x(i), y: y(d.value) - 12, class: "chart-value", "text-anchor": "middle" }, `${d.value}% peak`));
+    }
+  });
+
+  host.appendChild(svg);
+}
+
+// Chart 3: segmented bar + list — number of states per risk tier
+function renderRiskDistributionChart() {
+  const host = document.getElementById("chartRiskDist");
+  if (!host) return;
+
+  const order = ["very-high", "high", "moderate", "low"];
+  const groups = order.map((tier) => ({
+    tier,
+    states: Object.keys(DEMO_FLOOD_ASSESSMENT)
+      .filter((k) => DEMO_FLOOD_ASSESSMENT[k].tier === tier)
+      .map((k) => NE_STATES_DATA[k].name)
+  }));
+  const total = groups.reduce((sum, g) => sum + g.states.length, 0);
+
+  const bar = document.createElement("div");
+  bar.className = "risk-stack";
+  groups.forEach((g) => {
+    if (!g.states.length) return;
+    const seg = document.createElement("span");
+    seg.className = "risk-seg";
+    seg.tabIndex = 0;
+    seg.style.flexGrow = g.states.length;
+    seg.style.background = RISK_TIERS[g.tier].color;
+    seg.textContent = g.states.length;
+    attachTooltip(seg, `<strong>${RISK_TIERS[g.tier].label}</strong><br>${g.states.join(", ")}<br><em>Demo data</em>`);
+    bar.appendChild(seg);
+  });
+
+  const list = document.createElement("ul");
+  list.className = "risk-list";
+  list.innerHTML = groups.map((g) => `
+    <li>
+      <span class="risk-list-name"><i class="rl" style="background:${RISK_TIERS[g.tier].color}"></i>${RISK_TIERS[g.tier].label}</span>
+      <span class="risk-list-states">${g.states.join(", ") || "—"}</span>
+      <strong>${g.states.length}<small>/${total}</small></strong>
+    </li>
+  `).join("");
+
+  host.appendChild(bar);
+  host.appendChild(list);
+}
+
+function buildRiskLegend() {
+  const legend = document.createElement("div");
+  legend.className = "risk-legend-inline chart-legend";
+  legend.innerHTML = Object.values(RISK_TIERS)
+    .map((t) => `<span><i class="rl" style="background:${t.color}"></i>${t.label}</span>`)
+    .join("");
+  return legend;
 }
